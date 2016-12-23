@@ -1,0 +1,87 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\title{Semi-Definite Programming Solver}
+\author{Mihai DUSMANU \& Remi JEZEQUEL}
+
+\begin{document}
+	
+\maketitle
+
+\section{Formulae}
+
+\subsection{Primal and dual problem}
+
+($P$)\begin{tabular}{l l}
+	minimize$_{X}$ & $\mathbf{Tr}(C X)$ \\
+	subject to & $\mathbf{Tr}(A_i X) = b_i, \forall i \in \{1, \dots, m\}$ \\
+	& $X \succeq 0$  
+\end{tabular}
+
+$\mathcal{L}(X, Z, \mu) = \mathbf{Tr}(C X) - \mathbf{Tr}(X Z) + \sum_{1 \leq i \leq m} (\mathbf{Tr}(A_i X)) - b_i) \\
+\implies \nabla_X \mathcal{L}(X, Z, \mu) = C^T - Z^T + \sum_{1 \leq i \leq m} \mu_i A_i^T \\
+\implies g(Z, \mu) = \begin{cases}
+- \sum_{1 \leq i \leq m} \mu_i * b_i = - \mu^T b & if\ Z = C + \sum_{1 \leq i \leq m} \mu_i A_i^T \\ 
+- \infty & otherwise 
+\end{cases}$
+
+Thus, the dual is: \\
+($D_0$)\begin{tabular}{l l}
+	maximize$_{\mu, Z}$ & $- \mu^T b$ \\
+	subject to & $Z = C + \sum_{1 \leq i \leq m} \mu_i A_i$ \\
+	& $Z \succeq 0$
+\end{tabular}
+
+This problem can be simplified: \\
+($D$)\begin{tabular}{l l}
+	minimize$_{\mu}$ & $\mu^T b$ \\
+	subject to & $C + \sum_{1 \leq i \leq m} \mu_i A_i \succeq 0$
+\end{tabular}
+
+\subsection{Log-barrier method}
+We'll solve the dual problem by using the log-barrier method: \\
+($LB$)\begin{tabular}{l l}
+	minimize$_{\mu}$ & $t \mu^T b - \log(\det(C + \sum_{1 \leq i \leq m} \mu_i A_i))$
+\end{tabular}
+
+\begin{itemize}
+	\item $f(\mu) = t \mu^T b - \log(\det(C + \sum_{1 \leq i \leq m} \mu_i A_i))$
+	\item $F(\mu) = C + \sum_{1 \leq i \leq m} \mu_i A_i$
+\end{itemize}
+
+In order to use Newton's method, we need to compute: \begin{itemize}
+	\item $\nabla f(\mu)$ \\
+	$\nabla f(\mu) = t b - \begin{bmatrix}
+	\mathbf{Tr}(F(\mu)^{-1} A_i)
+	\end{bmatrix}_{1 \leq i \leq m}$
+	\item $\nabla^2 f(\mu)$ \\
+	$\frac{d \nabla f(\mu)}{d \mu_j} = - \begin{bmatrix}
+	\mathbf{Tr}(A_i^T \frac{d F(\mu)^{-1}}{d \mu_j})
+	\end{bmatrix}_{1 \leq i \leq m}$ \\
+	But $\frac{d F(\mu)^{-1}}{d \mu_j} = - F(\mu)^{-1} A_j F(\mu)^{-1} \\
+	\implies \nabla^2 f(\mu) = \begin{bmatrix}
+	\mathbf{Tr}(A_i^T F(\mu)^{-1} A_j F(\mu)^{-1})
+	\end{bmatrix}_{1 \leq i, j \leq m}$
+\end{itemize}
+
+\subsection{Primal solution from dual solution}
+
+Let $\mu^*$ be an optimal solution of ($D$). $\frac{1}{t} F(\mu^*)$ is an optimal solution of ($P$).
+
+\subsection{Rank 1 solution}
+
+In this section we suppose that $m = 1$, i.e. the problem ($P$) can be rewritten as follows: \\
+($P_{m = 1}$)\begin{tabular}{l l}
+	minimize$_{X}$ & $\mathbf{Tr}(C X)$ \\
+	subject to & $\mathbf{Tr}(A X) = b$ \\
+	& $X \succeq 0$  
+\end{tabular}
+
+According to Appendix $B.3$ of "Convex Optimization" - Boyd \& Vandenberghe, for all $X \in \mathbf{S}^n_+$ such as $\mathbf{Tr}(C X) = c$ and $\mathbf{Tr}(A X) = b$, there exists an $x \in \mathbb{R}^n$ that satisfies $\mathbf{Tr}(C x x^T) = c$ and $\mathbf{Tr}(A x x^T) = b$. 
+
+Thus if $X^*$ is an optimal solution of ($P_{m = 1}$) then we can find a vector $x^*$ such as the rank $1$ matrix $x^* (x^*)^T$ is an optimal solution as well. The proof given in the book is constructive so we implemented it directly.
+
+\end{document}
