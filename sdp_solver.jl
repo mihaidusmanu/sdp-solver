@@ -1,9 +1,9 @@
 eps = 1e-6;
-#C = [[1 2 3]; [2 9 0]; [3 0 7]];
-#A = zeros(2, 3, 3);
-#A[1, :, :] = [[1, 0, 1]; [0, 3, 7]; [1, 7, 5]];
-#A[2, :, :] = [[0, 2, 8]; [2, 6, 0]; [8, 0, 4]];
-#b = [11; 19];
+C = [[1 2 3]; [2 9 0]; [3 0 7]];
+A = zeros(2, 3, 3);
+A[1, :, :] = [[1, 0, 1]; [0, 3, 7]; [1, 7, 5]];
+A[2, :, :] = [[0, 2, 8]; [2, 6, 0]; [8, 0, 4]];
+b = [11; 19];
 # opt value 13.9
 #C = [[1 0 0 0]; [0 1 0 0]; [0 0 2 0];[0 0 0 2]];
 #A = zeros(1, 4, 4);
@@ -19,7 +19,7 @@ function sdp_solver(C, A, b)
   new_A = cat(1, A, eye3d)
   new_b = zeros(m + 1)
   new_b[m + 1] = 1
-  mu = barrier_method_stop(C, new_A, new_b, [zeros(m); -minimum(eig(C)[1]) + 1])[2];
+  mu = barrier_method_stop(C, new_A, new_b, [zeros(m); -minimum(real(eig(C)[1])) + 1])[2];
   if mu[m + 1] >= 0
     error("No strictly feasible point.")
   else
@@ -137,7 +137,7 @@ end
 
 function f_t(t, C, A, b, mu)
   F_mu = F(C, A, mu)
-  if minimum(eig(F_mu)[1]) <= 0
+  if minimum(real(eig(F_mu)[1])) <= 0
     Inf
   else
     t * b' * mu - log(det(F_mu))
@@ -153,3 +153,31 @@ function F(C, A, mu)
   end
   aux + C
 end
+
+
+# Make the Convex.jl module available
+using Convex
+
+# Generate random problem data
+n = 5
+#C = randn(n, n); A = randn(n, n); b = randn(1, 1)
+A1 = A[1,:,:]; A2 = A[2,:,:]; b1 = b[1]; b2 = b[2];
+
+# Create a (column vector) variable of size n x 1.
+x = Variable(3,3)
+
+problem = minimize(trace(C * x), trace(A1 * x) == b1, trace(A2 * x) == b2, lambdamin(x) >= 0)
+
+# Solve the problem by calling solve!
+solve!(problem)
+
+# Check the status of the problem
+problem.status # :Optimal, :Infeasible, :Unbounded etc.
+
+# Get the optimum value
+problem.optval
+
+#Ap = zeros(1,n,n)
+#Ap[1,:,:] = A;
+(x,mu) = sdp_solver(C,A,b)
+print(trace(C*x))
