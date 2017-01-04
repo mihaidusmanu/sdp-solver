@@ -21,7 +21,7 @@
 	& $X \succeq 0$  
 \end{tabular}
 
-$\mathcal{L}(X, Z, \mu) = \mathbf{Tr}(C X) - \mathbf{Tr}(X Z) + \sum_{1 \leq i \leq m} (\mathbf{Tr}(A_i X)) - b_i) \\
+$\mathcal{L}(X, Z, \mu) = \mathbf{Tr}(C X) - \mathbf{Tr}(X Z) + \sum_{1 \leq i \leq m} \mu_i (\mathbf{Tr}(A_i X) - b_i) \\
 \implies \nabla_X \mathcal{L}(X, Z, \mu) = C^T - Z^T + \sum_{1 \leq i \leq m} \mu_i A_i^T \\
 \implies g(Z, \mu) = \begin{cases}
 - \sum_{1 \leq i \leq m} \mu_i * b_i = - \mu^T b & if\ Z = C + \sum_{1 \leq i \leq m} \mu_i A_i^T \\ 
@@ -44,11 +44,11 @@ This problem can be simplified: \\
 \subsection{Log-barrier method}
 We'll solve the dual problem by using the log-barrier method: \\
 ($LB$)\begin{tabular}{l l}
-	minimize$_{\mu}$ & $t \mu^T b - \log(\det(C + \sum_{1 \leq i \leq m} \mu_i A_i))$
+	minimize$_{\mu}$ & $t b^T \mu - \log(\det(C + \sum_{1 \leq i \leq m} \mu_i A_i))$
 \end{tabular}
 
 \begin{itemize}
-	\item $f(\mu) = t \mu^T b - \log(\det(C + \sum_{1 \leq i \leq m} \mu_i A_i))$
+	\item $f(\mu) = t b^T \mu - \log(\det(C + \sum_{1 \leq i \leq m} \mu_i A_i))$
 	\item $F(\mu) = C + \sum_{1 \leq i \leq m} \mu_i A_i$
 \end{itemize}
 
@@ -57,7 +57,7 @@ In order to use Newton's method, we need to compute: \begin{itemize}
 	$\nabla f(\mu) = t b - \begin{bmatrix}
 	\mathbf{Tr}(F(\mu)^{-1} A_i)
 	\end{bmatrix}_{1 \leq i \leq m}$
-	\item $\nabla^2 f(\mu)$ \\
+	\item $\nabla^2 f(\mu)x$ \\
 	$\frac{d \nabla f(\mu)}{d \mu_j} = - \begin{bmatrix}
 	\mathbf{Tr}([\frac{d \mathbf{Tr}(F(\mu)^{-1} A_i)}{dF(\mu)}]^T \frac{d F(\mu)}{d \mu_j})
 	\end{bmatrix}_{1 \leq i \leq m}$ \\
@@ -83,5 +83,13 @@ In this section we suppose that $m = 1$, i.e. the problem ($P$) can be rewritten
 According to Appendix $B.3$ of "Convex Optimization" - Boyd \& Vandenberghe, for all $X \in \mathbf{S}^n_+$ such as $\mathbf{Tr}(C X) = c$ and $\mathbf{Tr}(A X) = b$, there exists an $x \in \mathbb{R}^n$ that satisfies $\mathbf{Tr}(C x x^T) = c$ and $\mathbf{Tr}(A x x^T) = b$. 
 
 Thus if $X^*$ is an optimal solution of ($P_{m = 1}$) then we can find a vector $x^*$ such as the rank $1$ matrix $x^* (x^*)^T$ is an optimal solution as well. The proof given in the book is constructive so we implemented it directly.
+
+\section{Random SDP problems}
+
+\subsection{SDP problem with one equality constraint}
+We pick $C$ a random $n \times n$ matrix. For $A$ and $b$, we pick values that guarantee that the problem will be bounded (e.g. $A = diag(1 : n), b = 1$).
+
+\subsection{SDP problem with two (or more) equality constraints}
+We pick $C$ a random $n \times n$ matrix. For $A_1$ and $b_1$, we pick values that guarantee that the problem will be bounded (e.g. $A = diag(1 : n), b = 1$). For the other constraints ($A_2, b_2, \dots$) we pick random values. This doesn't guarantee that the problem will be feasible.
 
 \end{document}
