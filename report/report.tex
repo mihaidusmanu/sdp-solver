@@ -37,7 +37,7 @@ Thus, the dual is: \\
 
 This problem can be simplified: \\
 ($D$)\begin{tabular}{l l}
-	minimize$_{\mu}$ & $\mu^T b$ \\
+	minimize$_{\mu}$ & $b^T \mu$ \\
 	subject to & $C + \sum_{1 \leq i \leq m} \mu_i A_i \succeq 0$
 \end{tabular}
 
@@ -59,11 +59,11 @@ In order to use Newton's method, we need to compute: \begin{itemize}
 	\end{bmatrix}_{1 \leq i \leq m}$
 	\item $\nabla^2 f(\mu)$ \\
 	$\frac{d \nabla f(\mu)}{d \mu_j} = - \begin{bmatrix}
-	\mathbf{Tr}(A_i^T \frac{d F(\mu)^{-1}}{d \mu_j})
+	\mathbf{Tr}([\frac{d \mathbf{Tr}(F(\mu)^{-1} A_i)}{dF(\mu)}]^T \frac{d F(\mu)}{d \mu_j})
 	\end{bmatrix}_{1 \leq i \leq m}$ \\
-	But $\frac{d F(\mu)^{-1}}{d \mu_j} = - F(\mu)^{-1} A_j F(\mu)^{-1} \\
+	But $\frac{d F(\mu)}{d \mu_j} = A_j$, and $\frac{d \mathbf{Tr}(F(\mu)^{-1} A_i)}{dF(\mu)} = - F(\mu)^{-T} A_i^T F(\mu)^{-T} \\
 	\implies \nabla^2 f(\mu) = \begin{bmatrix}
-	\mathbf{Tr}(A_i^T F(\mu)^{-1} A_j F(\mu)^{-1})
+	\mathbf{Tr}(F(\mu)^{-1} A_i F(\mu)^{-1} A_j)
 	\end{bmatrix}_{1 \leq i, j \leq m}$
 \end{itemize}
 
