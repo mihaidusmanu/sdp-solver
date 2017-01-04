@@ -207,6 +207,6 @@ print(trace(C * x))
 print("\n")
 # Rank 1 testing
 #print("Rank 1 solution:\n")
-#v = rank1_solution(C, A, x)
+#v = rank1_solution(C, A[1, :, :], x)
 #print(trace(C * v * v'))
-print("\n")
+#print("\n")
