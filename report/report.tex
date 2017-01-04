@@ -92,4 +92,8 @@ We pick $C$ a random $n \times n$ matrix. For $A$ and $b$, we pick values that g
 \subsection{SDP problem with two (or more) equality constraints}
 We pick $C$ a random $n \times n$ matrix. For $A_1$ and $b_1$, we pick values that guarantee that the problem will be bounded (e.g. $A = diag(1 : n), b = 1$). For the other constraints ($A_2, b_2, \dots$) we pick random values. This doesn't guarantee that the problem will be feasible.
 
+\section{Comparison with "Convex.jl"}
+
+We've noticed that the performance of our algorithm on randomly generated SDP problems is extremely variable (in some cases we get results that are close to the ones obtained with the module "Convex.jl", in some others the results are really different). We don't know if this comes from an error in our implementation or simply from numerical problems. 
+
 \end{document}
