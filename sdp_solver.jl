@@ -163,13 +163,13 @@ using Convex
 
 # Generate random problem in dimension sz * sz with one equality constraint that
 # assures the fact that the problem is bounded
-sz = 3
-C = randn(sz, sz)
-A = zeros(1, sz, sz)
-A[1, :, :] = diagm(1 : sz)
-b = [1]
-x = Variable(sz, sz)
-problem = minimize(trace(C * x), trace(A[1, :, :] * x) == b[1], lambdamin(x) >= 0)
+#sz = 3
+#C = randn(sz, sz)
+#A = zeros(1, sz, sz)
+#A[1, :, :] = diagm(1 : sz)
+#b = [1]
+#x = Variable(sz, sz)
+#problem = minimize(trace(C * x), trace(A[1, :, :] * x) == b[1], lambdamin(x) >= 0)
 
 # First debugging example
 # Opt: 13.9
@@ -183,12 +183,12 @@ problem = minimize(trace(C * x), trace(A[1, :, :] * x) == b[1], lambdamin(x) >= 
 
 # Second debugging example
 # Opt: 4
-#C = [[1 0 0 0]; [0 1 0 0]; [0 0 2 0];[0 0 0 2]]
-#A = zeros(1, 4, 4)
-#A[1, :, :] = [[1 0 0 0]; [0 1 0 0]; [0 0 0 0]; [0 0 0 0]]
-#b = [4]
-#x = Variable(4, 4)
-#problem = minimize(trace(C * x), trace(A[1, :, :] * x) == b[1], lambdamin(x) >= 0)
+C = [[1 0 0 0]; [0 1 0 0]; [0 0 2 0];[0 0 0 2]]
+A = zeros(1, 4, 4)
+A[1, :, :] = [[1 0 0 0]; [0 1 0 0]; [0 0 0 0]; [0 0 0 0]]
+b = [4]
+x = Variable(4, 4)
+problem = minimize(trace(C * x), trace(A[1, :, :] * x) == b[1], lambdamin(x) >= 0)
 
 # Solve the problem by calling solve!
 solve!(problem)
@@ -206,7 +206,7 @@ print("Obtained:\n")
 print(trace(C * x))
 print("\n")
 # Rank 1 testing
-#print("Rank 1 solution:\n")
-#v = rank1_solution(C, A[1, :, :], x)
-#print(trace(C * v * v'))
-#print("\n")
+print("Rank 1 solution:\n")
+v = rank1_solution(C, A[1, :, :], x)
+print(trace(C * v * v'))
+print("\n")
